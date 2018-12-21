@@ -113,7 +113,7 @@ houtliner の肝となるのが秀丸エディタの **アウトライン解析�
 ### 情報の構造について
 ファイル、セクション、アウトライン、ズームがあります。
 
-![file_section_outline_zoom](img/file_section_outline_zoom)
+![file_section_outline_zoom](img/file_section_outline_zoom.jpg)
 
 赤線の外側からファイル、セクション、アウトライン、そして丸で囲んだ行がズームを持つ行です。
 
