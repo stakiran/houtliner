@@ -1,0 +1,299 @@
+LabelTop:
+
+$SOFTWARE_NAME    = "houtliner";
+$SOFTWARE_VERSION = "v0.1.0";
+$SOFTWARE_INFO    = $SOFTWARE_NAME + " " + $SOFTWARE_VERSION;
+
+#use_mouse_pos = true;
+if(iskeydown(0x10)){
+	#use_mouse_pos = false;
+}
+if(iskeydown(0x11)){
+	#use_mouse_pos = false;
+}
+if(iskeydown(0x12)){
+	#use_mouse_pos = false;
+}
+
+MenuDefinition:
+
+#cnt=0;
+
+#I_TOGGLE_SECTIONBAR = #cnt; #cnt=#cnt+1;
+#I_CLISTWND          = #cnt; #cnt=#cnt+1;
+#I_ZOOM              = #cnt; #cnt=#cnt+1;
+#I____SEP1           = #cnt; #cnt=#cnt+1;
+#I_TOGGLE_FOLD       = #cnt; #cnt=#cnt+1;
+#I_FOLD_ALL          = #cnt; #cnt=#cnt+1;
+#I_UNFOLD_ALL        = #cnt; #cnt=#cnt+1;
+#I____SEP2           = #cnt; #cnt=#cnt+1;
+#I_LV1               = #cnt; #cnt=#cnt+1;
+#I_LV2               = #cnt; #cnt=#cnt+1;
+#I_LV_ALL            = #cnt; #cnt=#cnt+1;
+#I____SEP3           = #cnt; #cnt=#cnt+1;
+#I_MOVE_TO_UP        = #cnt; #cnt=#cnt+1;
+#I_MOVE_TO_DOWN      = #cnt; #cnt=#cnt+1;
+#I____SEP4           = #cnt; #cnt=#cnt+1;
+#I_TOGGLE_OUTLINEWND = #cnt; #cnt=#cnt+1;
+#I_LEFT_OUTLINEWND   = #cnt; #cnt=#cnt+1;
+#I_RIGHT_OUTLINEWND  = #cnt; #cnt=#cnt+1;
+#I_UP_OUTLINEWND     = #cnt; #cnt=#cnt+1;
+#I_DOWN_OUTLINEWND   = #cnt; #cnt=#cnt+1;
+#I____SEP5          = #cnt; #cnt=#cnt+1;
+#I_EDIT_ME           = #cnt;
+
+#idx=#I_TOGGLE_SECTIONBAR; $items[#idx] = "(&E)見出しバー ON/OFF";
+#idx=#I_CLISTWND; $items[#idx]          = "(&W)アウトライン解析 別窓";
+#idx=#I_ZOOM; $items[#idx]              = "(&Z)ズーム";
+#idx=#I____SEP1; $items[#idx]           = "\x01";
+#idx=#I_TOGGLE_FOLD; $items[#idx]       = "(&X)折りたたむ";
+#idx=#I_FOLD_ALL; $items[#idx]          = "(&D)全部折りたたむ";
+#idx=#I_UNFOLD_ALL; $items[#idx]        = "(&C)全部折りたたみを解除する";
+#idx=#I____SEP2; $items[#idx]           = "\x01";
+#idx=#I_LV1; $items[#idx]               = "(&1)レベル1のみ展開 (*)";
+#idx=#I_LV2; $items[#idx]               = "(&2)レベル2まで展開 (*)";
+#idx=#I_LV_ALL; $items[#idx]            = "(&3)全展開 (*)";
+#idx=#I____SEP3; $items[#idx]           = "\x01";
+#idx=#I_MOVE_TO_UP; $items[#idx]        = "(&Q)このレベル配下を一つ↑に移動 (*)";
+#idx=#I_MOVE_TO_DOWN; $items[#idx]      = "(&A)このレベル配下を一つ↓に移動 (*)";
+#idx=#I____SEP4; $items[#idx]           = "\x01";
+#idx=#I_TOGGLE_OUTLINEWND; $items[#idx] = "(&O)アウトライン枠 ON/OFF";
+#idx=#I_LEFT_OUTLINEWND; $items[#idx]   = "(&H)アウトライン枠 ← (*)";
+#idx=#I_RIGHT_OUTLINEWND; $items[#idx]  = "(&L)アウトライン枠 → (*)";
+#idx=#I_UP_OUTLINEWND; $items[#idx]     = "(&K)アウトライン枠 ↑ (*)";
+#idx=#I_DOWN_OUTLINEWND; $items[#idx]   = "(&J)アウトライン枠 ↓ (*)";
+#idx=#I____SEP5; $items[#idx]           = "\x01";
+#idx=#I_EDIT_ME; $items[#idx]           = "(&P)Programming " + $SOFTWARE_INFO;
+#idx=#idx+1; #maxidx = #idx;
+
+AlwaysUpdate:
+
+/*
+// ファイルマネージャ枠を常用している場合は便利かもしれない.
+
+// メニューを開いたタイミングでファイルマネージャ枠の同期を実施する.
+// ただし枠を開いていない時は処理スキップ.
+// なぜ? -> ファァイルマネージャ枠はタブを変えても自動同期されず手動同期が面倒だから.
+loaddll "HmExplorerPane.dll";
+#caller_hidemaru_handle = hidemaruhandle(0);
+#dll_mode = dllfunc("GetMode", #caller_hidemaru_handle);
+if(#dll_mode!=-1){
+	#dll_hwnd = dllfunc("GetWindowHandle", #caller_hidemaru_handle);
+	#dll_ret = sendmessage(#dll_hwnd, 0x111, 252, 0); //252=同期
+}
+*/
+
+MenuTracking:
+
+if(#use_mouse_pos==true){
+	mousemenuarray $items, #maxidx;
+}else{
+	menuarray $items, #maxidx;
+}
+
+if(result==0){
+	// Cancel
+	endmacro;
+}
+#si = result-1;
+$sn = $items[#si];
+
+Actions:
+
+// OK_if_not_outline_file はどのファイル上でも実行を許可するもの.
+// 秀丸エディタの機能を呼び出しているので汎用的に使いたい.
+//
+// NG_if_not_outline_file は .outline ファイル上でのみ実行を許可するもの.
+// houtliner 独自の機能なので, 他ファイル編集時に誤発動させたくない.
+
+Actions_OK_if_not_outline_file:
+
+if(#si==#I_EDIT_ME){
+	$path = hidemarudir+"\\hidemaru.exe " + currentmacrofilename;
+	run $path;
+	endmacro;
+}
+
+if(#si==#I_TOGGLE_SECTIONBAR){
+	showoutlinebar;
+	endmacro;
+}
+
+if(#si==#I_CLISTWND){
+	clist;
+	endmacro;
+}
+
+if(#si==#I_TOGGLE_FOLD){
+	if(folded==1){
+		unfold;
+		endmacro;
+	}
+
+	// 0x0002 インデントの深さ
+
+	// fold の挙動:
+	//   if カーソル行が折りたたみ可能 → 折りたたむ
+	//   if カーソル行が折りたたみ不可 → 折りたたみ可能行にジャンプ
+
+	if(foldable(0x0002)){
+		fold 0x0002;
+		endmacro;
+	}
+
+	// ここに来た = 折りたたみ不可能.
+	//   案1: fold x2 で直近の親で折りたたむ
+	//   案2: 折り畳まない
+	// 試用したところ, 案1 で直近の親にカーソルが移るのは煩わしいと感じた.
+	// 案2で.
+	/*
+	// fold を二回行えば, 折りたたみ可能行にジャンプ → 折りたたむ, ができる.
+	fold 0x0002;
+	fold 0x0002;
+	*/
+	endmacro;
+}
+
+if(#si==#I_FOLD_ALL){
+	// 0 ダイアログを出さない
+	foldall 0x0002, 0;
+	endmacro;
+}
+
+if(#si==#I_UNFOLD_ALL){
+	unfoldall;
+	endmacro;
+}
+
+if(#si==#I_LV1){
+	#ret = sendmessage(outlinehandle, 0x111, 7181, 0);
+	endmacro;
+}
+
+if(#si==#I_LV2){
+	#ret = sendmessage(outlinehandle, 0x111, 7182, 0);
+	endmacro;
+}
+
+if(#si==#I_LV_ALL){
+	#ret = sendmessage(outlinehandle, 0x111, 7180, 0);
+	endmacro;
+}
+
+if(#si==#I_MOVE_TO_UP){
+	#ret = sendmessage(outlinehandle, 0x111, 7169, 0);
+	setfocus 1;
+	//goto MenuTracking;
+	endmacro;
+}
+
+if(#si==#I_MOVE_TO_DOWN){
+	#ret = sendmessage(outlinehandle, 0x111, 7170, 0);
+	setfocus 1;
+	//goto MenuTracking;
+	endmacro;
+}
+
+if(#si==#I_TOGGLE_OUTLINEWND){
+	showoutline;
+	endmacro;
+}
+
+if(#si==#I_LEFT_OUTLINEWND){
+	#ret = sendmessage(outlinehandle, 0x111, 7131, 0);
+	// 表示変更後はアウトライン枠にフォーカスが当たってしまうので
+	// テキストエリアに戻す.
+	//
+	// [setfocus]
+	// 1 　 編集エリア
+	// 2 　 アウトライン解析の枠
+	setfocus 1;
+	endmacro;
+}
+
+if(#si==#I_RIGHT_OUTLINEWND){
+	#ret = sendmessage(outlinehandle, 0x111, 7132, 0);
+	setfocus 1;
+	endmacro;
+}
+
+if(#si==#I_UP_OUTLINEWND){
+	#ret = sendmessage(outlinehandle, 0x111, 7133, 0);
+	setfocus 1;
+	endmacro;
+}
+
+if(#si==#I_DOWN_OUTLINEWND){
+	#ret = sendmessage(outlinehandle, 0x111, 7134, 0);
+	setfocus 1;
+	endmacro;
+}
+
+Actions_NG_if_not_outline_file:
+
+// .outline ファイルでない時は何もしない. 誤発動防止のため.
+call if_not_outline_then_end;
+
+if(#si==#I_ZOOM){
+	// キーは zoom:YYMMDD_HHMMSS 固定にする.
+	// 理由1. キー名を考える手間がない(ユーザーに決めさせない)
+	// 理由2. 秒単位文字列なら衝突はない
+
+	call get_currentline;
+	$curline = $$return;
+	$query = "zoom:";
+	#querylen = strlen($query);
+
+	$zoomfile_key = "";
+
+	// zoom file key を確定させる.
+	// 新規時は生成した日付時刻文字列を使う.
+	// 既存時は既に記入されてる分を抽出する.
+	if(strstr($curline, $query)==-1){
+		// xxxzoom:... → xxx zoom:...
+		//                   ^
+		//               見栄えのため, 行末＆スペース区切りを保証する.
+		golineend;
+		insert " ";
+
+		call get_currentshortdate;
+		$zoomfile_key = $$return;
+		insert $query + $zoomfile_key;
+	}else{
+		#querypos = strstr($curline, $query);
+		#mid_start_pos = #querypos + #querylen;
+		#zoomfile_keylen = strlen("YYMMDD_HHMMSS");
+		$zoomfile_key = midstr($curline, #mid_start_pos, #zoomfile_keylen);
+	}
+
+	$arg1    = $zoomfile_key;
+	$arg2    = directory;     // 今開かれている .outline のディレクトリ
+	$args    = $arg1 + " " +$arg2;
+	$binname = "create_zoomfile_in_the_current.bat";
+	$bindir  = currentmacrodirectory;
+	$binfull = $bindir + "\\" + $binname;
+	run $binfull + " " + $args;
+
+	endmacro;
+}
+
+endmacro;
+
+SubRoutines:
+
+if_not_outline_then_end:
+	if(filetype!=".outline"){
+		endmacro;
+	}
+	return 0;
+
+get_currentshortdate:
+	// yymmdd_hhmmss
+
+	// midstr(year, 2, 2) だと動作しないので変数でワンクッション.
+	$curyear = year;
+	$curyear = midstr($curyear, 2, 2);
+	return $curyear + month + day + "_" + hour + minute + second;
+
+get_currentline:
+	return gettext(0, y, linelen ,y, 0);
