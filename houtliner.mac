@@ -1,7 +1,7 @@
 LabelTop:
 
 $SOFTWARE_NAME    = "houtliner";
-$SOFTWARE_VERSION = "v0.1.0";
+$SOFTWARE_VERSION = "v0.2.0";
 $SOFTWARE_INFO    = $SOFTWARE_NAME + " " + $SOFTWARE_VERSION;
 
 #use_mouse_pos = true;
@@ -22,6 +22,7 @@ MenuDefinition:
 #I_TOGGLE_SECTIONBAR = #cnt; #cnt=#cnt+1;
 #I_CLISTWND          = #cnt; #cnt=#cnt+1;
 #I_ZOOM              = #cnt; #cnt=#cnt+1;
+#I_FOCUS             = #cnt; #cnt=#cnt+1;
 #I____SEP1           = #cnt; #cnt=#cnt+1;
 #I_TOGGLE_FOLD       = #cnt; #cnt=#cnt+1;
 #I_FOLD_ALL          = #cnt; #cnt=#cnt+1;
@@ -45,6 +46,7 @@ MenuDefinition:
 #idx=#I_TOGGLE_SECTIONBAR; $items[#idx] = "(&E)見出しバー ON/OFF";
 #idx=#I_CLISTWND; $items[#idx]          = "(&W)アウトライン解析 別窓";
 #idx=#I_ZOOM; $items[#idx]              = "(&Z)ズーム";
+#idx=#I_FOCUS; $items[#idx]             = "(&F)フォーカス ON/OFF";
 #idx=#I____SEP1; $items[#idx]           = "\x01";
 #idx=#I_TOGGLE_FOLD; $items[#idx]       = "(&X)折りたたむ";
 #idx=#I_FOLD_ALL; $items[#idx]          = "(&D)全部折りたたむ";
@@ -234,6 +236,15 @@ Actions_NG_if_not_outline_file:
 // .outline ファイルでない時は何もしない. 誤発動防止のため.
 call if_not_outline_then_end;
 
+if(#si==#I_FOCUS){
+	if(rangeeditmode){
+		rangeeditout;
+	}else{
+		rangeeditin;
+	}
+	endmacro;
+}
+
 if(#si==#I_ZOOM){
 	// キーは zoom:YYMMDD_HHMMSS 固定にする.
 	// 理由1. キー名を考える手間がない(ユーザーに決めさせない)
@@ -269,7 +280,7 @@ if(#si==#I_ZOOM){
 	$arg1    = $zoomfile_key;
 	$arg2    = directory;     // 今開かれている .outline のディレクトリ
 	$args    = $arg1 + " " +$arg2;
-	$binname = "create_zoomfile_in_the_current.bat";
+	$binname = "create_zoomfile.bat";
 	$bindir  = currentmacrodirectory;
 	$binfull = $bindir + "\\" + $binname;
 	run $binfull + " " + $args;

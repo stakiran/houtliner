@@ -99,7 +99,7 @@ houtliner の肝となるのが秀丸エディタの **アウトライン解析�
   - houtliner は半角スペース n 個でレベル n を表現します
   - 全角スペースだと(半角スペースを打つための)切り替えが面倒くさいです
 
-### create_zoomfile_in_the_current.bat
+### create_zoomfile.bat
 ズーム機能用のファイルです。現状ではフォルダ名が「zoomfiles」、拡張子は「.md(Markdown)」。
 
 - 気に食わないならバッチファイルを開いて適宜変えること
