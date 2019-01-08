@@ -34,6 +34,9 @@
 - Windows 7 以上
 - 秀丸エディタ V8.58 以上
 
+## ダウンロード
+- [houtliner_v0.2.0.zip](https://github.com/stakiran/zips/raw/master/houtliner_v0.2.0.zip)
+
 ## インストール方法(必須)
 秀丸エディタは既にインストールしているものとします。また、基本的な使い方や設定方法についても知っているものとします。
 
