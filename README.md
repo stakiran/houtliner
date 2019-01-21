@@ -35,7 +35,9 @@
 - 秀丸エディタ V8.58 以上
 
 ## ダウンロード
-- [houtliner_v0.2.0.zip](https://github.com/stakiran/zips/raw/master/houtliner_v0.2.0.zip)
+- 19/01/21 [houtliner_v0.3.0.zip](https://github.com/stakiran/zips/raw/master/houtliner_v0.3.0.zip)
+  - 目印を表すマーク文法(全角のセミコロン `；` )を追加
+- 19/01/08 [houtliner_v0.2.0.zip](https://github.com/stakiran/zips/raw/master/houtliner_v0.2.0.zip)
 
 ## インストール方法(必須)
 秀丸エディタは既にインストールしているものとします。また、基本的な使い方や設定方法についても知っているものとします。
