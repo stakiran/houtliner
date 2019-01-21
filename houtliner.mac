@@ -1,7 +1,7 @@
 LabelTop:
 
 $SOFTWARE_NAME    = "houtliner";
-$SOFTWARE_VERSION = "v0.2.0";
+$SOFTWARE_VERSION = "v0.3.0";
 $SOFTWARE_INFO    = $SOFTWARE_NAME + " " + $SOFTWARE_VERSION;
 
 #use_mouse_pos = true;
@@ -23,6 +23,7 @@ MenuDefinition:
 #I_CLISTWND          = #cnt; #cnt=#cnt+1;
 #I_ZOOM              = #cnt; #cnt=#cnt+1;
 #I_FOCUS             = #cnt; #cnt=#cnt+1;
+#I_JUMP_TO_MARK      = #cnt; #cnt=#cnt+1;
 #I____SEP1           = #cnt; #cnt=#cnt+1;
 #I_TOGGLE_FOLD       = #cnt; #cnt=#cnt+1;
 #I_FOLD_ALL          = #cnt; #cnt=#cnt+1;
@@ -47,6 +48,7 @@ MenuDefinition:
 #idx=#I_CLISTWND; $items[#idx]          = "(&W)アウトライン解析 別窓";
 #idx=#I_ZOOM; $items[#idx]              = "(&Z)ズーム";
 #idx=#I_FOCUS; $items[#idx]             = "(&F)フォーカス ON/OFF";
+#idx=#I_JUMP_TO_MARK; $items[#idx]      = "(&G)直近のマークにジャンプ";
 #idx=#I____SEP1; $items[#idx]           = "\x01";
 #idx=#I_TOGGLE_FOLD; $items[#idx]       = "(&X)折りたたむ";
 #idx=#I_FOLD_ALL; $items[#idx]          = "(&D)全部折りたたむ";
@@ -285,6 +287,21 @@ if(#si==#I_ZOOM){
 	$binfull = $bindir + "\\" + $binname;
 	run $binfull + " " + $args;
 
+	endmacro;
+}
+
+if(#si==#I_JUMP_TO_MARK){
+	// 検索設定が上書きされるのを防ぐため, 
+	// 現在の設定を保持してから検索を行い, 終わった後で復旧する.
+	#oldsettings = searchoption;
+	$oldgrepee   = grepfilebuffer;
+	$oldquery = ""; // 元々検索語は保持されてないのでテキトーに空文字で.
+
+	$query = "；";
+	searchdown2 $query, noregular, loop;
+
+	setsearch $oldquery, #oldsettings;
+	setgrepfile $oldgrepee;
 	endmacro;
 }
 
